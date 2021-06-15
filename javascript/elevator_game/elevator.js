@@ -5,20 +5,17 @@
         const PASS = 0;
         const STOP = 1;
         const TURN = 2;
-        const NUMFLOORS = Math.max(...floors.map(floor => floor.floorNum()));
+        const MAXFLOORS = Math.max(...floors.map(floor => floor.floorNum()));
 
-        let distance = function(elevator, floorNum) {
-            return Math.abs( elevator.currentFloor() - floorNum);
-        }
-
-        let findIdle = function(floorNum) {
-            return elevators.filter( (elevator) => (elevator.destinationQueue.length == 0))
-                .sort( (a,b) => (distance(a, floorNum) - distance(b, floorNum)) );
-        };
-
+        floorsWaitingForElevator = [new Set(), new Set()]
 
         let setWaiting = function(floorNum, direction) {
+            if((direction == UP && floorNum == MAXFLOORS) || (direction == UP && floorNum == MAXFLOORS)){
+                console.log(`Direction is ${direction} and floorNum is ${floorNum}`);
+                return;
+            }
 
+            floorsWaitingForElevator[direction].add(floorNum);
         };
 
         floors.forEach(floor => {
@@ -32,7 +29,7 @@
 
 
         let handleStop = function(elevator, floor) {
-            if(elevator.currentFloor() == NUMFLOORS) {
+            if(elevator.currentFloor() == MAXFLOORS) {
                 elevator.direction = DOWN;
                 elevator.goingUpIndicator(false);
                 elevator.goingDownIndicator(true);
@@ -47,12 +44,15 @@
             if(elevator.loadFactor() == 0) {
 
             }
+            else {
+                let pressedFloors = elevator.getPressedFloors();
+
+            }
         };
 
-        elevators.forEach(elevator =>
-            {
+        elevators.forEach(elevator =>{
 
-            elevator.stops = new Set()
+            elevator.stops = new Set();
 
             elevator.on('floor_button_pressed', floor => elevator.stops.add(floor));
             elevator.on('passing_floor', floor => handleApproach(elevator, floor));
