@@ -24,7 +24,13 @@
         });
 
         let handleApproach = function(elevator, floor) {
+            if(elevator.stops.has(floor)){
+                elevator.goToFloor(floor);
+            }
 
+            if(floorsWaitingForElevator[elevator.direction].has(floor) && elevator.loadFactor() < 1) {
+                elevator.goToFloor(floor);
+            }
         };
 
 
