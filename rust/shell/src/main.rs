@@ -1,9 +1,6 @@
 /*
 * Basic Shell
 */
-// use nix::sys::wait::wait;
-// use nix::unistd::ForkResult::{Child, Parent};
-// use nix::unistd::{fork, getpid, getppid};
 use std::io;
 use std::io::Write;
 use std::process::Command;
@@ -19,17 +16,25 @@ fn shell_loop()
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("Failed to read line");
 
-        let command = input.split_whitespace();
-        let tokens: Vec<&str> =  command.collect();
+        let mut line = input.trim().split_whitespace();
+        let command = line.next().unwrap();
+        let args = line;
 
-        if tokens[0] == "quit" {break;}
+        match command
+        {
+            "quit" => return,
+            command =>
+            {
+                let mut child = Command::new(command)
+                    .args(args)
+                    .spawn()
+                    .expect(&format!("{} command failed to start", command));
 
-        println!("Executing command {}", tokens[0]);
+                child.wait().expect("Failed to execute command");
+            }
 
-        Command::new(tokens[0])
-            .args(&tokens[1..])
-            .spawn()
-            .expect(&format!("{} command failed to start", tokens[0]));
+
+        }
 
         io::stdout().flush().expect("Flushing errors");
 
