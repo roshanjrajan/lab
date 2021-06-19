@@ -9,6 +9,7 @@
 
 ####Notes
 [Docker with Nix](http://sandervanderburg.blogspot.com/2020/07/on-using-nix-and-docker-as-deployment.html)
+[Nix with Bazel](https://www.tweag.io/blog/2018-03-15-bazel-nix/)
 
 ####Citations
 
